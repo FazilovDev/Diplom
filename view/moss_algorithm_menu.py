@@ -21,10 +21,25 @@ class MossAlgorithmMenu(Frame):
         self.top_frame.pack()
         self.top_frame.config(bg="white")
 
-        self.show()
+        self.twoFiles = Button(self.top_frame, text="Анализ 2х файлов", command=self.choice_count_twofiles)
+        self.twoFiles.pack(side=LEFT)
+        self.severalFiles = Button(self.top_frame, text="Анализ более двух файлов", command=self.choice_count_severalfiles)
+        self.severalFiles.pack(side=LEFT)
         
     def close(self):
         self.destroy()
+    
+    def destroy_choice_button(self):
+        self.twoFiles.destroy()
+        self.severalFiles.destroy()
+
+    def choice_count_twofiles(self):
+        self.destroy_choice_button()
+        self.show()
+    
+    def choice_count_severalfiles(self):
+        self.destroy_choice_button()
+        self.show_group_analyze()
 
     def choice_f1(self):
         self.file1 = fd.askopenfilename(defaultextension='.cpp', filetypes=[('CPP', '.cpp'),('TXT', '.txt'), ('Py', '.py')])
@@ -96,4 +111,30 @@ class MossAlgorithmMenu(Frame):
         self.text2 = Text(frame3, width=int(100), height=int(100))
         self.text2.pack(side=LEFT)
 
-    
+    def choice_directory(self):
+        self.directory = fd.askdirectory()
+        self.text_directory['text'] = "Директория: {}".format(self.directory)
+        self.button_choice_directory.destroy()
+
+    def show_group_analyze(self):
+        frame1 = Frame(self)
+        frame1.pack(fill=X)
+        frame1.config(bg="white")
+
+        self.button_choice_directory = Button(frame1, text="Выберите директорию с работами студентов(у каждого студента своя папка)", font=("Arial Bold", 11), command=self.choice_directory)
+        self.button_choice_directory.pack()
+
+        self.text_directory = Label(frame1, text="", font=("Arial Bold", 11))
+        self.text_directory.config(bg="white")
+        self.text_directory.pack()
+
+        frame2 = Frame(self)
+        frame2.pack(fill=X)
+        frame2.config(bg="white")
+
+        
+
+
+
+        
+
