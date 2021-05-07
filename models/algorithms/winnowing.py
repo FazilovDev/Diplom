@@ -126,3 +126,5 @@ def get_fingerprints(file1, file2, k, q, w):
     merged_points2 = get_merged_points(points2)
     return (merged_points1, merged_points2)
 
+
+
