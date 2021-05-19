@@ -1,10 +1,13 @@
 from tkinter import *
 from tkinter import filedialog as fd
 import locale
+from tkinter import messagebox
 from models.algorithms.winnowing import get_fingerprints, get_text_from_file
-k = 15
+#k = 21#17#17 #15
 q = 259#259
-w = 4
+#w = 8 #4
+
+#Оптимальные значения k = 8 w = 3
 class MossAlgorithmMenu(Frame):
     def __init__(self, parent):
         Frame.__init__(self, parent, background="white")
@@ -42,11 +45,11 @@ class MossAlgorithmMenu(Frame):
         self.show_group_analyze()
 
     def choice_f1(self):
-        self.file1 = fd.askopenfilename(defaultextension='.cpp', filetypes=[('CPP', '.cpp'),('TXT', '.txt'), ('Py', '.py')])
+        self.file1 = fd.askopenfilename(defaultextension='.py', filetypes=[('Py', '.py'), ('CPP', '.cpp'),('TXT', '.txt')])
         self.text_info_menu['text'] = "Загрузите\n {}\n {}:".format(self.file1, self.file2)
         
     def choice_f2(self):
-        self.file2 = fd.askopenfilename(defaultextension='.cpp', filetypes=[('CPP', '.cpp'),('TXT', '.txt'),('Py', '.py')])   
+        self.file2 = fd.askopenfilename(defaultextension='.py', filetypes=[('Py', '.py'), ('CPP', '.cpp'),('TXT', '.txt')])   
         self.text_info_menu['text'] = "Загрузите\n {}\n {}:".format(self.file1, self.file2)
     
     def print_file1(self,text, points, side):
@@ -55,6 +58,7 @@ class MossAlgorithmMenu(Frame):
             textfield = self.text1
         else:
             textfield = self.text2
+        textfield.delete(1.0,END)
         textfield.insert('end', newCode)
         plagCount = 0
         for i in range(len(points)):
@@ -76,10 +80,13 @@ class MossAlgorithmMenu(Frame):
         text1 = get_text_from_file(self.file1)
         text2 = get_text_from_file(self.file2)
 
-        mergedPoints = get_fingerprints(self.file1, self.file2, k, q, w)
-        res = self.print_file1(text1, mergedPoints[0], 0)
-        res1 = self.print_file1(text2, mergedPoints[1], 1)
-        self.text_plagiarism['text'] = "Уникальность файла: {} : {}%\nУникальность файла: {} : {}%".format(self.file1.split('/')[-1::][0], int((1-res)*100), self.file2.split('/')[-1::][0], int((1-res1)*100))
+        try:
+            mergedPoints = get_fingerprints(self.file1, self.file2, self.k.get(), q, self.w.get())
+            res = self.print_file1(text1, mergedPoints[0], 0)
+            res1 = self.print_file1(text2, mergedPoints[1], 1)
+            self.text_plagiarism['text'] = "Уникальность файла: {} : {}%\nУникальность файла: {} : {}%".format(self.file1.split('/')[-1::][0], int((1-res)*100), self.file2.split('/')[-1::][0], int((1-res1)*100))
+        except Exception as e:
+            messagebox.showinfo("Ошибка!", str(e))
 
     def show(self):
         frame1 = Frame(self)
@@ -96,6 +103,27 @@ class MossAlgorithmMenu(Frame):
         choice_file2.pack(side=RIGHT, expand=True)
         choice_file1 = Button(frame1, text="Файл №1", command=self.choice_f1)
         choice_file1.pack(side=RIGHT, expand=True)
+
+        frame4 = Frame(self)
+        frame4.pack(fill=X)
+        frame4.config(bg="white")
+
+        self.text_k = Label(frame4, text="Размер граммы k:")
+        self.text_k.config(bg="white")
+        self.text_k.pack()
+        self.k = IntVar()
+        self.k_entry = Entry(frame4,textvariable=self.k)
+        self.k_entry.pack()
+        self.k.set(8)
+
+
+        self.text_w = Label(frame4, text="Размер окна w:")
+        self.text_w.config(bg="white")
+        self.text_w.pack()
+        self.w = IntVar()
+        self.w_entry = Entry(frame4,textvariable=self.w)
+        self.w_entry.pack()
+        self.w.set(3)
         
         frame2 = Frame(self)
         frame2.pack(fill=X)

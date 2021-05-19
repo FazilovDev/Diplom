@@ -500,6 +500,7 @@ def detect(pycode_string_list, diff_method=UnifiedDiff, keep_prints=False, modul
     func_info_list = []
     for index, code_str in enumerate(pycode_string_list):
         root_node = ast.parse(code_str)
+
         collector = FuncNodeCollector(keep_prints=keep_prints)
         collector.visit(root_node)
         code_utf8_lines = code_str.splitlines(True)

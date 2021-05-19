@@ -20,7 +20,7 @@ def get_plag_ast(file1, file2):
     code1 = get_source_code_from_file(file1)
     code2 = get_source_code_from_file(file2)
 
-    results = ast.detect([code1, code2], diff_method=ast.TreeDiff, keep_prints=False, module_level=False)
+    results = ast.detect([code1, code2], diff_method=ast.UnifiedDiff, keep_prints=True, module_level=False)
 
     results_labels = []
     for index, func_ast_diff_list in results:

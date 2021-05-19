@@ -17,13 +17,53 @@ def get_text_processing(text):
     stop_symbols = [' ', ',']
     return ''.join(j for j in text if not j in stop_symbols)
 
-def get_hash_from_gram(gram, q):
+def get_hash_from_gram2(gram, q):
     h = 0
     k = len(gram)
     for char in gram:
         x = int(ord(char)-ord('a') + 1)
         h = (h * k + x) % q
     return h
+
+def get_hash_from_gram1(str,q):
+     
+    # P and M
+    p = 31
+    m = 1e9 + 9
+    power_of_p = 1
+    hash_val = 0
+ 
+    # Loop to calculate the hash value
+    # by iterating over the elements of string
+    for i in range(len(str)):
+        hash_val = ((hash_val + (ord(str[i]) -
+                                 ord('a') + 1) *
+                              power_of_p) % m)
+ 
+        power_of_p = (power_of_p * p) % m
+ 
+    return int(hash_val)
+
+def get_hash_from_gram3(gram, q):
+    h = 0
+    k = len(gram)#277
+    mod = 10 ** 9 + 7# 2**64
+    m = 1
+    for letter in gram:
+        x = ord(letter) - ord('a') + 1
+        h = (h + m * x) % mod
+        m = (m * k) % mod
+    return h
+
+
+import hashlib
+
+def get_hash_from_gram(gram, q):
+    hashval = hashlib.sha1(gram.encode('utf-8'))
+    hashval = hashval.hexdigest()[-4 :]
+    hashval = int(hashval, 16)  #using last 16 bits of sha-1 digest
+    return hashval
+
 
 def get_k_grams_from_text(text, k = 25, q = 31):
     grams = []
@@ -66,6 +106,39 @@ def winnow(hashes, w):
 
 def get_points(fp1, fp2, token, hashes, grams):
     points = []
+    #print(token)
+    for i in range(len(fp1)):
+        for j in range(i, len(fp2)):
+            if fp1[i] == fp2[j]:
+                #print('i: {0} j:{1} fp1:{2} fp2:{3}'.format(i,j,fp1[i],fp2[j]))
+                flag = 0
+                startx = endx = None
+                match = hashes.index(fp1[i])
+                newStart = grams[match].start_pos
+                newEnd = grams[match].end_pos
+
+                #print('newStart:{0} newEnd:{1}'.format(newStart,newEnd))
+                
+                for k in token:
+                    if k[2] == newStart:
+                        #print('token: {0} newStart: {1}'.format(k[2], newStart))
+                        startx = k[1]
+                        flag = 1
+                    if k[2] == newEnd:
+                        #print('token: {0} newEnd: {1}'.format(k[2], newEnd))
+                        endx = k[1]
+                newEnd = k
+                if flag == 1 and endx != None:
+                    points.append([startx, endx])
+                
+                #points.append([newStart, newEnd])
+    points.sort(key = lambda x: x[0])
+    points = points[1:]
+    #print('points = ',points)
+    return points
+
+def get_points1(fp1, fp2, token, hashes, grams):
+    points = []
     for i in fp1:
         for j in fp2:
             if i == j:
@@ -79,12 +152,13 @@ def get_points(fp1, fp2, token, hashes, grams):
                     if k[2] == newStart: 
                         startx = k[1]
                         flag = 1
-                    if k[2] == newEnd:
+                    elif k[2] == newEnd:
                         endx = k[1]
                 if flag == 1 and endx != None:
                     points.append([startx, endx])
     points.sort(key = lambda x: x[0])
     points = points[1:]
+    #print('points = ',points)
     return points
 
 def get_merged_points(points):
@@ -100,6 +174,7 @@ def get_merged_points(points):
                 pass
         else:
             mergedPoints.append(points[i])
+    #print('merged = ', mergedPoints)
     return mergedPoints
 
 def get_fingerprints(file1, file2, k, q, w):
@@ -109,15 +184,23 @@ def get_fingerprints(file1, file2, k, q, w):
 
     text1proc = toText(token1)
     text2proc = toText(token2)
-
+    print(text1proc)
     grams1 = get_k_grams_from_text(text1proc, k, q)
     grams2 = get_k_grams_from_text(text2proc, k, q)
+
+
 
     hashes1 = get_hashes_from_grams(grams1)
     hashes2 = get_hashes_from_grams(grams2)
 
+
+    print('hashes: {0}'.format(hashes1))
     fp1 = winnow(hashes1, w)
     fp2 = winnow(hashes2, w)
+
+
+    print('fp1: {0}'.format(fp1))
+    print('fp2: {0}'.format(fp2))
 
     points1 = get_points(fp1, fp2, token1, hashes1, grams1)
     points2 = get_points(fp1, fp2, token2, hashes2, grams2)
