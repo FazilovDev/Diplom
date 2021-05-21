@@ -52,6 +52,14 @@ token1 = tokenize(file1)
 text1proc = toText(token1)
 grams1 = get_k_grams_from_text(text1proc, 8, 2**10)
 
-get_fingerprints(file1, file1,8,1,3)
+#get_fingerprints(file1, file1,8,1,3)#8
 
+from math import *
+kl = [i for i in range(1, 21)]
+wl = [i for i in range(1, 16)]
 
+for k in kl:
+    for w in wl:
+        d, nd = get_fing(file1, file2, k, 259, w)
+        if abs(d-nd) < 1e-7:
+            print('k:{0}, w:{1}\n{2} = {3}'.format(k,w,d,nd))

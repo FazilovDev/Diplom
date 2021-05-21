@@ -46,11 +46,11 @@ class MossAlgorithmMenu(Frame):
 
     def choice_f1(self):
         self.file1 = fd.askopenfilename(defaultextension='.py', filetypes=[('Py', '.py'), ('CPP', '.cpp'),('TXT', '.txt')])
-        self.text_info_menu['text'] = "Загрузите\n {}\n {}:".format(self.file1, self.file2)
+        self.text_info_menu['text'] = "Загрузите\n {}\n {}:".format(self.file1.split('/')[-1], self.file2.split('/')[-1])
         
     def choice_f2(self):
         self.file2 = fd.askopenfilename(defaultextension='.py', filetypes=[('Py', '.py'), ('CPP', '.cpp'),('TXT', '.txt')])   
-        self.text_info_menu['text'] = "Загрузите\n {}\n {}:".format(self.file1, self.file2)
+        self.text_info_menu['text'] = "Загрузите\n {}\n {}:".format(self.file1.split('/')[-1], self.file2.split('/')[-1])
     
     def print_file1(self,text, points, side):
         newCode = text[: points[0][0]]
@@ -81,9 +81,10 @@ class MossAlgorithmMenu(Frame):
         text2 = get_text_from_file(self.file2)
 
         try:
-            mergedPoints = get_fingerprints(self.file1, self.file2, self.k.get(), q, self.w.get())
+            mergedPoints = get_fingerprints(self.file1, self.file2, self.k.get(), self.q.get(), self.w.get())
             res = self.print_file1(text1, mergedPoints[0], 0)
             res1 = self.print_file1(text2, mergedPoints[1], 1)
+            self.text_similarity['text'] = "Расстояние Жаккара: {0:4.4f}".format(mergedPoints[2])
             self.text_plagiarism['text'] = "Уникальность файла: {} : {}%\nУникальность файла: {} : {}%".format(self.file1.split('/')[-1::][0], int((1-res)*100), self.file2.split('/')[-1::][0], int((1-res1)*100))
         except Exception as e:
             messagebox.showinfo("Ошибка!", str(e))
@@ -92,13 +93,17 @@ class MossAlgorithmMenu(Frame):
         frame1 = Frame(self)
         frame1.pack(fill=X)
         frame1.config(bg="white")
-        self.text_info_menu = Label(frame1, text="Загрузите \n{} \n{}:".format(self.file1, self.file2), font=("Arial Bold", 20))
+        self.text_info_menu = Label(frame1, text="Загрузите \n{} \n{}:".format(self.file1, self.file2), font=("Arial Bold", 18))
         self.text_info_menu.config(bg="white")
         self.text_info_menu.pack()
 
-        self.text_plagiarism = Label(frame1, text="Уникальность файла: {} : {}%\nУникальность файла: {} : {}%".format("",0, "", 0), font=("Arial Bold", 20))
+        self.text_plagiarism = Label(frame1, text="Уникальность файла: {} : {}%\nУникальность файла: {} : {}%".format("",0, "", 0), font=("Arial Bold", 14))
         self.text_plagiarism.config(bg="white")
         self.text_plagiarism.pack()
+        self.text_similarity = Label(frame1, text="Расстояние Жаккара: 0", font=("Arial Bold", 20))
+        self.text_similarity.config(bg="white")
+        self.text_similarity.pack()
+
         choice_file2 = Button(frame1, text="Файл №2", command=self.choice_f2)
         choice_file2.pack(side=RIGHT, expand=True)
         choice_file1 = Button(frame1, text="Файл №1", command=self.choice_f1)
@@ -124,6 +129,14 @@ class MossAlgorithmMenu(Frame):
         self.w_entry = Entry(frame4,textvariable=self.w)
         self.w_entry.pack()
         self.w.set(3)
+
+        self.text_q = Label(frame4, text="Величина Q:")
+        self.text_q.config(bg="white")
+        self.text_q.pack()
+        self.q = IntVar()
+        self.q_entry = Entry(frame4,textvariable=self.q)
+        self.q_entry.pack()
+        self.q.set(701)
         
         frame2 = Frame(self)
         frame2.pack(fill=X)

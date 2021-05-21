@@ -17,7 +17,7 @@ def get_text_processing(text):
     stop_symbols = [' ', ',']
     return ''.join(j for j in text if not j in stop_symbols)
 
-def get_hash_from_gram2(gram, q):
+def get_hash_from_gram1(gram, q):
     h = 0
     k = len(gram)
     for char in gram:
@@ -25,7 +25,7 @@ def get_hash_from_gram2(gram, q):
         h = (h * k + x) % q
     return h
 
-def get_hash_from_gram1(str,q):
+def get_hash_from_gram2(str,q):
      
     # P and M
     p = 31
@@ -44,9 +44,10 @@ def get_hash_from_gram1(str,q):
  
     return int(hash_val)
 
-def get_hash_from_gram3(gram, q):
+def get_hash_from_gram(gram, q):
     h = 0
-    k = len(gram)#277
+    k = 273
+
     mod = 10 ** 9 + 7# 2**64
     m = 1
     for letter in gram:
@@ -58,7 +59,7 @@ def get_hash_from_gram3(gram, q):
 
 import hashlib
 
-def get_hash_from_gram(gram, q):
+def get_hash_from_gram1(gram, q):
     hashval = hashlib.sha1(gram.encode('utf-8'))
     hashval = hashval.hexdigest()[-4 :]
     hashval = int(hashval, 16)  #using last 16 bits of sha-1 digest
@@ -137,7 +138,7 @@ def get_points(fp1, fp2, token, hashes, grams):
     #print('points = ',points)
     return points
 
-def get_points1(fp1, fp2, token, hashes, grams):
+def get_points(fp1, fp2, token, hashes, grams):
     points = []
     for i in fp1:
         for j in fp2:
@@ -177,6 +178,13 @@ def get_merged_points(points):
     #print('merged = ', mergedPoints)
     return mergedPoints
 
+def distance_jaccard(A, B):
+    res = []
+    a = set(A)
+    b = set(B)
+    return len(a.intersection(b)) / min(len(a), len(b))
+
+
 def get_fingerprints(file1, file2, k, q, w):
 
     token1 = tokenize(file1)
@@ -184,7 +192,7 @@ def get_fingerprints(file1, file2, k, q, w):
 
     text1proc = toText(token1)
     text2proc = toText(token2)
-    print(text1proc)
+
     grams1 = get_k_grams_from_text(text1proc, k, q)
     grams2 = get_k_grams_from_text(text2proc, k, q)
 
@@ -194,20 +202,39 @@ def get_fingerprints(file1, file2, k, q, w):
     hashes2 = get_hashes_from_grams(grams2)
 
 
-    print('hashes: {0}'.format(hashes1))
+    #print('hashes: {0}'.format(hashes1))
+    fp1 = winnow(hashes1, w)
+    fp2 = winnow(hashes2, w)
+
+    #print('fp1: {0}'.format(fp1))
+    #print('fp2: {0}'.format(fp2))
+
+    points1 = get_points(fp1, fp2, token1, hashes1, grams1)
+    points2 = get_points(fp2, fp1, token2, hashes2, grams2)
+    
+    merged_points1 = get_merged_points(points1)
+    merged_points2 = get_merged_points(points2)
+    return (merged_points1, merged_points2, distance_jaccard(fp1, fp2))
+
+
+def get_fing(file1, file2, k, q, w):
+
+    token1 = tokenize(file1)
+    token2 = tokenize(file2)
+
+    text1proc = toText(token1)
+    text2proc = toText(token2)
+    grams1 = get_k_grams_from_text(text1proc, k, q)
+    grams2 = get_k_grams_from_text(text2proc, k, q)
+
+
+
+    hashes1 = get_hashes_from_grams(grams1)
+    hashes2 = get_hashes_from_grams(grams2)
+
+
     fp1 = winnow(hashes1, w)
     fp2 = winnow(hashes2, w)
 
 
-    print('fp1: {0}'.format(fp1))
-    print('fp2: {0}'.format(fp2))
-
-    points1 = get_points(fp1, fp2, token1, hashes1, grams1)
-    points2 = get_points(fp1, fp2, token2, hashes2, grams2)
-    
-    merged_points1 = get_merged_points(points1)
-    merged_points2 = get_merged_points(points2)
-    return (merged_points1, merged_points2)
-
-
-
+    return (len(fp1))/len(hashes1), 2/(w+1)
