@@ -32,6 +32,9 @@ def tokenize(filename):
 
     return result
 
+def toList(arr):
+    return [str(x[0]) for x in arr]
+
 def toText(arr):
     cleanText = ''.join(str(x[0]) for x in arr)
     return cleanText

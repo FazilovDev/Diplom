@@ -178,7 +178,7 @@ def get_merged_points(points):
     #print('merged = ', mergedPoints)
     return mergedPoints
 
-def distance_jaccard(A, B):
+def distance_simpson(A, B):
     res = []
     a = set(A)
     b = set(B)
@@ -214,7 +214,7 @@ def get_fingerprints(file1, file2, k, q, w):
     
     merged_points1 = get_merged_points(points1)
     merged_points2 = get_merged_points(points2)
-    return (merged_points1, merged_points2, distance_jaccard(fp1, fp2))
+    return (merged_points1, merged_points2, distance_simpson(fp1, fp2))
 
 
 def get_fing(file1, file2, k, q, w):
