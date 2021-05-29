@@ -1,4 +1,4 @@
-import models.algorithms.ast_algorithm.ast as ast
+import models.algorithms.ast_algorithm.astt as ast
 
 
 def get_source_code_from_file(filename):
@@ -46,6 +46,8 @@ def get_plag_ast(file1, file2):
     return results_labels
 
 def get_str_from_list_code(list_code, start, end):
+    if start == end:
+        return list_code[start]
     res = ''
     for i in range(start, end):
         res += list_code[i]

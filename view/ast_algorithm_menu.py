@@ -1,7 +1,8 @@
 from tkinter import *
 from tkinter import filedialog as fd
 import locale
-from models.algorithms.AST import get_source_code_from_ast_detect
+from models.algorithms.AST import get_source_code_from_ast_detect, get_source_code_lines_from_file, get_str_from_list_code
+from view.ast_git import get_points_clones
 k = 15
 q = 259#259
 w = 4
@@ -50,27 +51,44 @@ class AstAlgorithmMenu(Frame):
         self.file2 = fd.askopenfilename(defaultextension='.py', filetypes=[('Py', '.py')]) 
         self.text_info_menu['text'] = "Загрузите\n {}\n {}:".format(self.file1, self.file2)
     
-    def print_file(self, text_code, side):
+    def print_file(self, code, points, side):
         if side == 0:
             textfield = self.text1
         else:
             textfield = self.text2
 
+        textfield.delete(1.0,END)
+        print(points)
+        clear_start = 0
+        for i in range(len(points)):
+            start = points[i][0]
+            end = points[i][1]
+
+            if clear_start < start - 1:
+                textfield.insert('end', get_str_from_list_code(code, clear_start, start-1))
+
+            textfield.insert('end', get_str_from_list_code(code, start-1, end), 'warning')
+            clear_start = end
+        
+        if clear_start < len(points)-1:
+            textfield.insert('end', get_str_from_list_code(code, clear_start, len(points)))
+
+        '''
         for i in range(len(text_code)):
             if i % 2 == 0:
                 textfield.insert('end', text_code[i])
             else:
                 textfield.insert('end', text_code[i], 'warning')
+        '''
 
     def analyze(self):
         self.text1.tag_config('warning', background="orange",)
         self.text2.tag_config('warning', background="orange")
 
-        plag_percent, text1, text2 = get_source_code_from_ast_detect(self.file1, self.file2)
-        plag_percent2, textt1, textt2 = get_source_code_from_ast_detect(self.file2, self.file1)
-        self.text_plagiarism['text'] = "Уникальность файла: {} : {}%\nУникальность файла: {} : {}%".format(self.file1.split('/')[-1::][0], int(plag_percent), self.file2.split('/')[-1::][0], int(plag_percent2))
-        self.print_file(text1, 0)
-        self.print_file(text2, 1)
+        points = get_points_clones([self.file1, self.file2])
+        #self.text_plagiarism['text'] = "Уникальность файла: {} : {}%\nУникальность файла: {} : {}%".format(self.file1.split('/')[-1::][0], int(plag_percent), self.file2.split('/')[-1::][0], int(plag_percent2))
+        self.print_file(get_source_code_lines_from_file(self.file1),points[self.file1], 0)
+        self.print_file(get_source_code_lines_from_file(self.file2),points[self.file2], 1)
 
     def show(self):
         frame1 = Frame(self)

@@ -75,6 +75,7 @@ class BaseNodeNormalizer(ast.NodeTransformer):
 
     def generic_visit(self, node):
         self._node_count = self._node_count + 1
+    
         self._mark_docstring_sub_nodes(node)
         return super(BaseNodeNormalizer, self).generic_visit(node)
 

@@ -216,6 +216,37 @@ def get_fingerprints(file1, file2, k, q, w):
     merged_points2 = get_merged_points(points2)
     return (merged_points1, merged_points2, distance_simpson(fp1, fp2))
 
+def get_fingerprints_no_file(code1, code2, k, q, w):
+
+    token1 = tokenize_code(code1)
+    token2 = tokenize_code(code2)
+
+    text1proc = toText(token1)
+    text2proc = toText(token2)
+
+    grams1 = get_k_grams_from_text(text1proc, k, q)
+    grams2 = get_k_grams_from_text(text2proc, k, q)
+
+
+
+    hashes1 = get_hashes_from_grams(grams1)
+    hashes2 = get_hashes_from_grams(grams2)
+
+
+    #print('hashes: {0}'.format(hashes1))
+    fp1 = winnow(hashes1, w)
+    fp2 = winnow(hashes2, w)
+
+    #print('fp1: {0}'.format(fp1))
+    #print('fp2: {0}'.format(fp2))
+
+    points1 = get_points(fp1, fp2, token1, hashes1, grams1)
+    points2 = get_points(fp2, fp1, token2, hashes2, grams2)
+    
+    merged_points1 = get_merged_points(points1)
+    merged_points2 = get_merged_points(points2)
+    return (merged_points1, merged_points2, distance_simpson(fp1, fp2))
+
 
 def get_fing(file1, file2, k, q, w):
 
