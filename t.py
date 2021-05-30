@@ -1,11 +1,25 @@
-import models.algorithms.ast_algorithm.astt as ast
+import models.algorithms.AST as ast
 import astunparse
 from models.algorithms.winnowing import *
 
-file1 = 'Tests\\Python\\test4.py'
-file2 = 'Tests\\Python\\test3.py'
-file3 = 'Tests\\Python\\lab_1_pandasZadorozhnyy.py'
+#file1 = 'Tests\\Python\\test6.py'
+#file2 = 'Tests\\Python\\test7.py'
+#file3 = 'Tests\\set\\first_lab_Avakyan.py'
 
+def get_plag_combination_with_ast(filename1, filename2, k, q, w, k2, q2, w2):
+    fg = get_fingerprints(filename1, filename2, k, q, w)
+    if fg[2] > 0.5:
+        plag, text1, text2 = ast.get_source_code_from_ast_detect(filename1, filename2)
+        frag1 = ''.join(text1)
+        frag2 = ''.join(text2)
+        fg2 = get_fingerprints_no_file(frag1, frag2, k2, q2, w2)
+        combRes = fg[2]
+
+        return [fg[2], combRes]
+    return [fg[2], 0]
+
+#print(get_plag_combination1(file1,file2, 7,277,5,5,703,3))
+'''
 def get_source_code_from_file(filename):
     file = open(filename, 'r')
     code = file.read()
@@ -32,7 +46,7 @@ k = 5
 q = 2**64
 w = 4
 #get_fingerprints(file1, text3proc, k, q, w)
-'''
+
 from strsimpy.qgram import QGram
 
 qgram = QGram(5)
@@ -46,7 +60,6 @@ norm = NormalizedLevenshtein()
 print(norm.similarity(text1proc, text2proc))
 
 
-'''
 s = 'abrakadabra'
 token1 = tokenize(file1)
 text1proc = toText(token1)
@@ -63,3 +76,4 @@ for k in kl:
         d, nd = get_fing(file1, file2, k, 259, w)
         if abs(d-nd) < 1e-7:
             print('k:{0}, w:{1}\n{2} = {3}'.format(k,w,d,nd))
+'''

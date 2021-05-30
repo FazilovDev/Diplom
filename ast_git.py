@@ -222,9 +222,9 @@ def get_clones(files):
         res_files[file] = sorted(res_files[file])
     return res_files
 
-f1 = 'Tests\\Python\\test1.py'
-f2 = 'Tests\\Python\\test2.py'
-get_clones([f1,f2])
+#f1 = 'Tests\\Python\\test1.py'
+#f2 = 'Tests\\Python\\test2.py'
+#get_clones([f1,f2])
 
 def get_points_clones(files):
     clones = get_clones(files)
@@ -257,7 +257,7 @@ def get_fragments_code(code, points):
 
 def get_plag_combination(filename1, filename2, k, q, w, k2, q2, w2):
     fg = get_fingerprints(filename1, filename2, k, q, w)
-    if fg[2] > 0.2:
+    if fg[2] > 0.5:
         clones = get_points_clones([filename1, filename2])
         code1 = get_source_code_lines_from_file(filename1)
         code2 = get_source_code_lines_from_file(filename2)

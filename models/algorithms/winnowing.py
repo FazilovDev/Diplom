@@ -197,7 +197,6 @@ def get_fingerprints(file1, file2, k, q, w):
     grams2 = get_k_grams_from_text(text2proc, k, q)
 
 
-
     hashes1 = get_hashes_from_grams(grams1)
     hashes2 = get_hashes_from_grams(grams2)
 
@@ -211,7 +210,6 @@ def get_fingerprints(file1, file2, k, q, w):
 
     points1 = get_points(fp1, fp2, token1, hashes1, grams1)
     points2 = get_points(fp2, fp1, token2, hashes2, grams2)
-    
     merged_points1 = get_merged_points(points1)
     merged_points2 = get_merged_points(points2)
     return (merged_points1, merged_points2, distance_simpson(fp1, fp2))
