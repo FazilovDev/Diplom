@@ -2,24 +2,51 @@ import models.algorithms.AST as ast
 import astunparse
 from models.algorithms.winnowing import *
 
-#file1 = 'Tests\\Python\\test6.py'
-#file2 = 'Tests\\Python\\test7.py'
+file1 = 'Tests\\Python\\test8.py'
+file2 = 'Tests\\Python\\test9.py'
 #file3 = 'Tests\\set\\first_lab_Avakyan.py'
 
 def get_plag_combination_with_ast(filename1, filename2, k, q, w, k2, q2, w2):
-    fg = get_fingerprints(filename1, filename2, k, q, w)
-    if fg[2] > 0.5:
+    print(filename1, filename2)
+    try:
+        fg = get_fingerprints(filename1, filename2, k, q, w)
+    except:
+        return None
+    if fg[2] < 0.5:
+        return None
+
+    try:
         plag, text1, text2 = ast.get_source_code_from_ast_detect(filename1, filename2)
-        frag1 = ''.join(text1)
-        frag2 = ''.join(text2)
+    except:
+        return None
+    frag1 = ''.join(text1)
+    frag2 = ''.join(text2)
+    try:
         fg2 = get_fingerprints_no_file(frag1, frag2, k2, q2, w2)
-        combRes = fg[2]
+        combRes = max(fg2[2], plag)
+    except:
+        combRes = plag
+    print('plag:{}, fg:{}'.format(plag,combRes))
 
-        return [fg[2], combRes]
-    return [fg[2], 0]
+    return [fg[2], combRes]
 
-#print(get_plag_combination1(file1,file2, 7,277,5,5,703,3))
+ndr = 'Tests\\students'
+from models.preprocessing.analyzedirectory import get_files_in_directories
+print(get_files_in_directories(ndr, '.py'))
 '''
+import os
+import shutil
+
+dr = 'Tests\\set'
+ndr = 'Tests\\students'
+i = 1
+for path in os.listdir(dr):
+    os.rename(dr +'\\'+ path, ndr+'\\' + 'student{0}.py'.format(i))
+    i+=1
+
+#os.rename('a.txt', 'b.kml')
+#print(get_plag_combination_with_ast(file1,file2, 7,277,5,5,703,2))
+
 def get_source_code_from_file(filename):
     file = open(filename, 'r')
     code = file.read()

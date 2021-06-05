@@ -26,7 +26,6 @@ def tokenize(filename):
             pass
         else:
             result.append((tokens[i][1], count1, count2))  
-            #tuples in result-(each element e.g 'def', its position in original code file, position in cleaned up code/text) 
             count2 += len(tokens[i][1])
         count1 += len(tokens[i][1])
 
@@ -54,7 +53,6 @@ def tokenize_code(text):
             pass
         else:
             result.append((tokens[i][1], count1, count2))  
-            #tuples in result-(each element e.g 'def', its position in original code file, position in cleaned up code/text) 
             count2 += len(tokens[i][1])
         count1 += len(tokens[i][1])
 

@@ -1,6 +1,7 @@
 from tkinter import *
 from view.moss_algorithm_menu import *
 from view.ast_algorithm_menu import *
+from view.combination_menu import *
 from threading import Thread
 
 class MainMenu(Frame):
@@ -37,7 +38,10 @@ class MainMenu(Frame):
         self.moss_algorithm_button = Button(self.top_frame, text="Алгоритм Moss", font=("Arial Bold", 14), command=self.go_to_moss_algorithm)
         self.moss_algorithm_button.pack()
         
-        self.moss_algorithm_button = Button(self.top_frame, text="Алгоритм Ast", font=("Arial Bold", 14), command=self.go_to_ast_algorithm)
+        #self.moss_algorithm_button = Button(self.top_frame, text="Алгоритм Ast", font=("Arial Bold", 14), command=self.go_to_ast_algorithm)
+        #self.moss_algorithm_button.pack()
+
+        self.moss_algorithm_button = Button(self.top_frame, text="Комбинация методов", font=("Arial Bold", 14), command=self.go_to_combination_algorithm)
         self.moss_algorithm_button.pack()
     
     
@@ -58,6 +62,11 @@ class MainMenu(Frame):
     def go_to_ast_algorithm(self):
         self.close_menu()
         self.algorithm_plagiarizm = AstAlgorithmMenu(self)
+        self.algorithm_plagiarizm.open()
+    
+    def go_to_combination_algorithm(self):
+        self.close_menu()
+        self.algorithm_plagiarizm = CombinationMenu(self)
         self.algorithm_plagiarizm.open()
 
 

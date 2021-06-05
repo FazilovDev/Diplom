@@ -84,10 +84,10 @@ def get_source_code_from_ast_detect(filename1, filename2):
         current_index2 = point2.endlineno
     return result[0][0], code_1, code_2
 
-filename1 = 'Tests\\Python\\test3.py'
-filename2 = 'Tests\\Python\\test1.py'
+#filename1 = 'Tests\\Python\\test3.py'
+#filename2 = 'Tests\\Python\\test1.py'
 
-plag_percent, text1, text2 = get_source_code_from_ast_detect(filename1, filename2)
+#plag_percent, text1, text2 = get_source_code_from_ast_detect(filename1, filename2)
 
-print(text2)
+#print(text2)
 

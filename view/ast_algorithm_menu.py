@@ -2,10 +2,7 @@ from tkinter import *
 from tkinter import filedialog as fd
 import locale
 from models.algorithms.AST import get_source_code_from_ast_detect, get_source_code_lines_from_file, get_str_from_list_code
-from view.ast_git import get_points_clones
-k = 15
-q = 259#259
-w = 4
+from models.algorithms.ast_clones import get_points_clones
 
 class AstAlgorithmMenu(Frame):
     def __init__(self, parent):
